@@ -624,11 +624,26 @@ class RocketChat:
 
     # Rooms
 
-    def rooms_upload(self, rid, file, **kwargs):
+    def rooms_upload(self, rid, filepath, filetype=None, filename=None, filemsg=None, filedescription=None, **kwargs):
         """Post a message with attached file to a dedicated room."""
         files = {
-            'file': open(file, 'rb')
-        }
+                'file': open(filepath, 'rb')
+                }
+
+        if filename is not None:
+            files = {
+                    'file': (filename, files['file'])
+                    }
+
+        if filetype is not None:
+            files['file'] = files['file'] + (filetype,)
+            
+        if filemsg is not None:
+            files['msg'] = (None, filemsg)
+            
+        if filedescription is not None:
+            files['description'] = (None, filedescription)
+           
         return self.__call_api_post('rooms.upload/' + rid, kwargs=kwargs, use_json=False, files=files)
 
     def rooms_get(self, **kwargs):
